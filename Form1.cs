@@ -10,9 +10,12 @@ using System.Windows.Forms;
 
 namespace Chess
 {
+    using Chess.Pieces;
+
     public partial class Form1 : Form
     {
         Board Chessboard = new Board();
+        Piece[] Pieces = new Piece[32];
 
         public Form1()
         {
@@ -32,6 +35,8 @@ namespace Chess
             string tag;
             int piece;
             Button targetbutton = null;
+            
+            //Will go through row and col
             for (int row = 0; row < 8; row++)
             {
                 for (int col = 0; col < 8; col++)
@@ -39,6 +44,7 @@ namespace Chess
                     tag = $"{row}{col}";
                     piece = Chessboard.board[row, col];
 
+                    //This will look through each button made and look at tags. Can do this becuase buttons are auto put into Controls
                     foreach (Control control in this.Controls)
                     {
                         if (control is Button btn && btn.Tag != null && btn.Tag.ToString() == tag)

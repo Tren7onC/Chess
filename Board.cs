@@ -7,14 +7,12 @@ using System.Windows.Forms;
 
 namespace Chess
 {
-    //Need to include The Form as a super class beacuse of the Controls.
-    //The method Find the button thing needs this so I can actually look through 
-    // the buttons and not go through each indivially with a switch 
-    internal class Board : Form
+
+    using Chess.Pieces;
+    internal class Board
     {
-
         public int[,] board = new int[8, 8];
-
+        
         /*
         Piece numbers for reference:
    
@@ -45,6 +43,11 @@ namespace Chess
                 //Row 1 for Player 1/ Black Team
                 board[1, 0] = 17; board[1, 1] = 18; board[1, 2] = 19; board[1, 3] = 20; board[1, 4] = 21; board[1, 5] = 22; board[1, 6] = 23; board[1, 7] = 24;
         
+        }
+
+        public void UpdateBoard(Piece Pieces )
+        {
+
         }
 
 
