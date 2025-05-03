@@ -19,23 +19,41 @@ namespace Chess.Pieces
         public abstract List<Tuple<int, int>> GetPossibleMoves();
       
 
-        public bool Move()
+        public Piece[] Move(bool Valid,Board ChessBoard, Piece[] Pieces, Tuple<int, int> Selected)
         {
-            return true;
+            if(Valid)
+            {
+                if (ChessBoard.board[Selected.Item1, Selected.Item2] != 0)
+                {
+                    Pieces[ChessBoard.board[Selected.Item1, Selected.Item2]].hasBeenTaken = true;
+                }
+            }
+            return Pieces;
         }
 
-        public bool IsValidPostion(bool team, Tuple<int,int> Selected, List<Tuple<int, int>> possibleMoves, Board board)
+        public bool IsValidPostion(bool team, Tuple<int,int> Selected, List<Tuple<int, int>> possibleMoves, Board ChessBoard)
         {
             if (team)       //Team 1
             {
-                if(possibleMoves.Contains(Selected))
+                if(possibleMoves.Contains(Selected)) //Places in the bounds of board
                 {
-
+                    if (ChessBoard.board[Selected.Item1, Selected.Item2] <= 16) //To see if its on your team
+                    {
+                        return true;
+                    }
+                    else { return false; }
                 }
             }
             else if (!team) //Team 2
             {
-
+                if (possibleMoves.Contains(Selected)) //Places in the bounds of board
+                {
+                    if (ChessBoard.board[Selected.Item1, Selected.Item2] >= 17) //To see if its on your team
+                    {
+                        return true;
+                    }
+                    else { return false; }
+                }
             }
                 return false;
         }

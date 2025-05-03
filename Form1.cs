@@ -16,6 +16,7 @@ namespace Chess
     {
         Board Chessboard = new Board();
         Piece[] Pieces = new Piece[32];
+        Game GameState = new Game();
 
         public Form1()
         {
@@ -27,6 +28,29 @@ namespace Chess
         {
             Button clickedButton = sender as Button;
             TextBox.Text = String.Format($"{clickedButton.Tag}");
+
+            int row = int.Parse(clickedButton.Tag.ToString().Substring(0,1));
+            int col = int.Parse(clickedButton.Tag.ToString().Substring(1,1));
+
+            //Overall turn structure
+
+            //See if a Piece has been just selected
+                //If your piece based on turn
+                    //Yes: GameState.SelectedPiece = new Tuple<row,col>;
+                    //No: 
+                        //If a Piece has already been selected
+                            //Yes: Call various functions to Move
+                                //GetPossibleMoves of piece selected Piece[ChessBoard.Board[GameState.Selected.Item1,GameState.Selected.Item2]].GetPossibleMoves
+                                //Valid = IsValid(Stuff in here IDK);
+                                //Move(Valid, Plue stuff here to update pieces)
+                                //UpdateBoard based on Pieces[]
+                                //Other stuff??
+                            //No: Nothing happens
+            //Save the current board state
+            //Change the turn
+            //Repeat 
+
+
             DrawBoard();
         }
 
