@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Chess.Pieces
 {
-    internal abstract class Piece
+    internal class Piece
     {
         public int row;
         public int col;
@@ -16,17 +17,25 @@ namespace Chess.Pieces
         public bool hasMoved = false;
         
 
-        public abstract List<Tuple<int, int>> GetPossibleMoves();
+        public virtual List<Tuple<int, int>> GetPossibleMoves()
+        {
+            List<Tuple<int, int>> tmp = new List<Tuple<int, int>>();
+            return tmp;
+        }
       
 
-        public Piece[] Move(bool Valid,Board ChessBoard, Piece[] Pieces, Tuple<int, int> Selected)
+        public Piece[] Move(bool Valid,Board ChessBoard, Piece[] Pieces, Tuple<int, int> SelectedSpot, int PieceMoving)
         {
             if(Valid)
             {
-                if (ChessBoard.board[Selected.Item1, Selected.Item2] != 0)
+                if (ChessBoard.board[SelectedSpot.Item1, SelectedSpot.Item2] != 0) //Sees if where moving is a piece
                 {
-                    Pieces[ChessBoard.board[Selected.Item1, Selected.Item2]].hasBeenTaken = true;
+                    Pieces[ChessBoard.board[SelectedSpot.Item1, SelectedSpot.Item2]].hasBeenTaken = true; //If it is changes that piece to taken
                 }
+                //Set the piece location to new location
+                Pieces[PieceMoving].row = SelectedSpot.Item1;
+                Pieces[PieceMoving].col = SelectedSpot.Item2;
+                Pieces[PieceMoving].hasBeenTaken = true;
             }
             return Pieces;
         }
@@ -48,7 +57,7 @@ namespace Chess.Pieces
             {
                 if (possibleMoves.Contains(Selected)) //Places in the bounds of board
                 {
-                    if (ChessBoard.board[Selected.Item1, Selected.Item2] >= 17) //To see if its on your team
+                    if (ChessBoard.board[Selected.Item1, Selected.Item2] >= 17 || ChessBoard.board[Selected.Item1, Selected.Item2] == 0) //To see if its on your team
                     {
                         return true;
                     }

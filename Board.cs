@@ -45,8 +45,19 @@ namespace Chess
         
         }
 
-        public void UpdateBoard(Piece Pieces )
+        public Board UpdateBoard(Piece[] Pieces )
         {
+            Board tmp = new Board();
+            for (int row = 0; row < 8; row++)
+                for (int col = 0; col < 8; col++)
+                    tmp.board[row, col] = 0;
+
+            for(int k = 1; k < Pieces.Length; k++)
+                if (!Pieces[k].hasBeenTaken)
+                    tmp.board[Pieces[12].row, Pieces[12].col] = 12;
+
+
+            return tmp;
 
         }
 

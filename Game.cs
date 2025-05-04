@@ -11,7 +11,7 @@ namespace Chess
         public bool whoTurn = true; //Player 1 = true. Player 2 = false
         //Stuff for current selected Piece
         public Tuple<int, int> SelectedPiece;
-        public bool PieceSelected;
+        public bool PieceSelected = false;
 
     }
 }

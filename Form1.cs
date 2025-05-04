@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace Chess
 {
+    using System.Media;
     using Chess.Pieces;
 
     public partial class Form1 : Form
@@ -18,8 +19,20 @@ namespace Chess
         Piece[] Pieces = new Piece[32];
         Game GameState = new Game();
 
+
         public Form1()
         {
+
+            //Set Up pieces
+                //Player 1
+                Pieces[11] = new Knight(true, 7, 1);
+                Pieces[12] = new Knight(true, 7, 6);
+                //Player 2
+                Pieces[27] = new Knight(false, 0, 1);
+                Pieces[28] = new Knight(false, 0, 1);
+
+            //End
+
             InitializeComponent();
         }
 
@@ -32,28 +45,75 @@ namespace Chess
             int row = int.Parse(clickedButton.Tag.ToString().Substring(0,1));
             int col = int.Parse(clickedButton.Tag.ToString().Substring(1,1));
 
-            //Overall turn structure
+            int NumberOnboard = Chessboard.board[row, col];
+            HandleTurn(NumberOnboard,row,col);
 
-            //See if a Piece has been just selected
-                //If your piece based on turn
-                    //Yes: GameState.SelectedPiece = new Tuple<row,col>;
-                    //No: 
-                        //If a Piece has already been selected
-                            //Yes: Call various functions to Move
-                                //GetPossibleMoves of piece selected Piece[ChessBoard.Board[GameState.Selected.Item1,GameState.Selected.Item2]].GetPossibleMoves
-                                //Valid = IsValid(Stuff in here IDK);
-                                //Move(Valid, Plue stuff here to update pieces)
-                                //UpdateBoard based on Pieces[]
-                                //Other stuff??
-                            //No: Nothing happens
-            //Save the current board state
-            //Change the turn
-            //Repeat 
 
 
             DrawBoard();
         }
 
+        public void HandleTurn(int NumberOnBoard,int row, int col)
+        {
+            //Overall turn structure
+
+            //See if a Piece has been just selected // That is your peice
+            if (GameState.whoTurn) //If Player 1
+            {
+                if (NumberOnBoard >= 1 && NumberOnBoard <= 16) //if it is your piece// player 1
+                {
+                    GameState.SelectedPiece = new Tuple<int, int>(row, col); //Then set the new selected piece location
+                    GameState.PieceSelected = true;   
+                }
+                else //Not your piece
+                {
+                    if (GameState.PieceSelected) //If there is a piece selected then move that piece
+                    {
+                        List<Tuple<int, int>> PossibleMoves = new List<Tuple<int, int>>();
+                        int MovingPiece = Chessboard.board[GameState.SelectedPiece.Item1, GameState.SelectedPiece.Item2];
+                        TextBox.Text = String.Format($"{MovingPiece}");
+
+                        //PossibleMoves = Pieces[Chessboard.board[row, col]].GetPossibleMoves();
+                        PossibleMoves = Pieces[MovingPiece].GetPossibleMoves();
+
+                        //bool valid = Pieces[0].IsValidPostion(GameState.whoTurn, new Tuple<int, int>(row, col), PossibleMoves, Chessboard);
+                        bool valid = Pieces[MovingPiece].IsValidPostion(GameState.whoTurn, new Tuple<int, int>(row, col), PossibleMoves, Chessboard);
+
+                        //Pieces = Pieces[0].Move(valid,Chessboard,Pieces,new Tuple<int,int>(row,col),MovingPiece);
+                        Pieces = Pieces[MovingPiece].Move(valid, Chessboard, Pieces, new Tuple<int, int>(row, col), 12);
+
+
+                      
+                        GameState.PieceSelected = false;
+                        GameState.SelectedPiece = null;
+                        
+                        //And then change the turn and stuff
+                        Chessboard = Chessboard.UpdateBoard(Pieces);
+                        //TextBox.Text = String.Format("Piece Selected: ###");
+
+                    }
+                    //else
+                        //TextBox.Text = String.Format("No Piece Selected");
+                }
+            }
+            else if (!GameState.whoTurn)
+            {
+
+            }
+            //Yes: GameState.SelectedPiece = new Tuple<row,col>;
+            //No: 
+            //If a Piece has already been selected
+            //Yes: Call various functions to Move
+            //GetPossibleMoves of piece selected Piece[ChessBoard.Board[GameState.Selected.Item1,GameState.Selected.Item2]].GetPossibleMoves
+            //Valid = IsValid(Stuff in here IDK);
+            //Move(Valid, Plue stuff here to update pieces)
+            //UpdateBoard based on Pieces[]
+            //Other stuff??
+            //No: Nothing happens
+            //Save the current board state
+            //Change the turn
+            //Repeat 
+        }
         public void DrawBoard()
         {
             string tag;
@@ -162,6 +222,10 @@ namespace Chess
                             targetbutton.BackgroundImage = Properties.Resources.BlackKing;
                             targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
                             targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                        }
+                        else if(piece == 0)
+                        {
+                            targetbutton.BackgroundImage = null;
                         }
                     }
                 }
