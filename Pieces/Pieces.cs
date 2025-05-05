@@ -15,9 +15,10 @@ namespace Chess.Pieces
         public bool hasBeenTaken = false;
         public bool team;               //True for Player 1/White. False for Player 2/Black
         public bool hasMoved = false;
+        public string name;
         
 
-        public virtual List<Tuple<int, int>> GetPossibleMoves()
+        public virtual List<Tuple<int, int>> GetPossibleMoves(Board Chessboard)
         {
             List<Tuple<int, int>> tmp = new List<Tuple<int, int>>();
             return tmp;
@@ -35,36 +36,13 @@ namespace Chess.Pieces
                 //Set the piece location to new location
                 Pieces[PieceMoving].row = SelectedSpot.Item1;
                 Pieces[PieceMoving].col = SelectedSpot.Item2;
-                Pieces[PieceMoving].hasBeenTaken = true;
             }
             return Pieces;
         }
 
-        public bool IsValidPostion(bool team, Tuple<int,int> Selected, List<Tuple<int, int>> possibleMoves, Board ChessBoard)
+        public bool IsValidPostion( Tuple<int,int> Selected, List<Tuple<int, int>> possibleMoves)
         {
-            if (team)       //Team 1
-            {
-                if(possibleMoves.Contains(Selected)) //Places in the bounds of board
-                {
-                    if (ChessBoard.board[Selected.Item1, Selected.Item2] <= 16) //To see if its on your team
-                    {
-                        return true;
-                    }
-                    else { return false; }
-                }
-            }
-            else if (!team) //Team 2
-            {
-                if (possibleMoves.Contains(Selected)) //Places in the bounds of board
-                {
-                    if (ChessBoard.board[Selected.Item1, Selected.Item2] >= 17 || ChessBoard.board[Selected.Item1, Selected.Item2] == 0) //To see if its on your team
-                    {
-                        return true;
-                    }
-                    else { return false; }
-                }
-            }
-                return false;
+            return possibleMoves.Contains(Selected);
         }
     }
 }

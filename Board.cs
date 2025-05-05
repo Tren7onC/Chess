@@ -39,7 +39,7 @@ namespace Chess
                 board[6, 0] = 1; board[6, 1] = 2; board[6, 2] = 3; board[6, 3] = 4; board[6, 4] = 5; board[6, 5] = 6; board[6, 6] = 7; board[6, 7] = 8;
 
                 //Row 0 for Player 1/ Black Team
-                board[0, 0] = 25; board[0, 1] = 27; board[0, 2] = 29; board[0, 3] = 31; board[0, 4] = 32; board[0, 5] = 26; board[0, 6] = 28; board[0, 7] = 30;
+                board[0, 0] = 25; board[0, 1] = 27; board[0, 2] = 29; board[0, 3] = 31; board[0, 4] = 32; board[0, 5] = 30; board[0, 6] = 28; board[0, 7] = 26;
                 //Row 1 for Player 1/ Black Team
                 board[1, 0] = 17; board[1, 1] = 18; board[1, 2] = 19; board[1, 3] = 20; board[1, 4] = 21; board[1, 5] = 22; board[1, 6] = 23; board[1, 7] = 24;
         
@@ -54,7 +54,7 @@ namespace Chess
 
             for(int k = 1; k < Pieces.Length; k++)
                 if (!Pieces[k].hasBeenTaken)
-                    tmp.board[Pieces[12].row, Pieces[12].col] = 12;
+                    tmp.board[Pieces[k].row, Pieces[k].col] = k;
 
 
             return tmp;

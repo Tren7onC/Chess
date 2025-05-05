@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace Chess.Pieces
 {
-    internal class Knight : Piece
+    internal class King : Piece
     {
-
-        public Knight(bool team, int row, int col) 
+        public King(bool team, int row, int col)
         {
             this.team = team;
             this.row = row;
             this.col = col;
-            this.Pointvalue = 3;
-            this.name = "Knight";
+            this.Pointvalue = 20;
+            this.name = "King";
         }
-
         private bool IsOppenent(int val)
         {
             return team ? val >= 17 : val >= 1 && val <= 16; //So this is like super condenced if statements
@@ -33,16 +31,16 @@ namespace Chess.Pieces
         {
             List<Tuple<int, int>> tmp = new List<Tuple<int, int>>();
 
-            int[] rowMoves = {2,2,-2,-2,1,1,-1,-1};
-            int[] colMoves = {1,-1,1,-1,2,-2,2,-2};
+            int[] rowMoves = { -1, -1, -1, 1, 1, 1, 0, 0 };
+            int[] colMoves = { -1,  0,  1,-1, 0, 1, 1, -1 };
 
-            for(int k = 0; k < 8; k++)
+            for (int k = 0; k < 8; k++)
             {
                 int fRow = row + rowMoves[k];
                 int fCol = col + colMoves[k];
 
-                if(fRow >= 0 && fRow <= 7 && fCol >= 0 && fCol<= 7 && !IsFriend(Chessboard.board[fRow,fCol]) )
-                    tmp.Add(new Tuple<int, int>(fRow,fCol));
+                if (fRow >= 0 && fRow <= 7 && fCol >= 0 && fCol <= 7 && !IsFriend(Chessboard.board[fRow, fCol]))
+                    tmp.Add(new Tuple<int, int>(fRow, fCol));
             }
 
             return tmp;
