@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chess.Pieces
 {
-    internal class Piece
+    internal abstract class Piece
     {
         public int row;
         public int col;
@@ -16,14 +16,11 @@ namespace Chess.Pieces
         public bool team;               //True for Player 1/White. False for Player 2/Black
         public bool hasMoved = false;
         public string name;
-        
 
-        public virtual List<Tuple<int, int>> GetPossibleMoves(Board Chessboard)
-        {
-            List<Tuple<int, int>> tmp = new List<Tuple<int, int>>();
-            return tmp;
-        }
-      
+
+        public abstract List<Tuple<int, int>> GetPossibleMoves(Board Chessboard);
+
+        public abstract Piece Copy();
 
         public Piece[] Move(bool Valid,Board ChessBoard, Piece[] Pieces, Tuple<int, int> SelectedSpot, int PieceMoving)
         {
@@ -44,5 +41,7 @@ namespace Chess.Pieces
         {
             return possibleMoves.Contains(Selected);
         }
+
+
     }
 }

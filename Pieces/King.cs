@@ -45,5 +45,14 @@ namespace Chess.Pieces
 
             return tmp;
         }
+        public override Piece Copy()
+        {
+            King copy = new King(this.team, this.row, this.col);
+            copy.Pointvalue = this.Pointvalue;
+            copy.hasBeenTaken = this.hasBeenTaken;
+            copy.hasMoved = this.hasMoved;
+            copy.name = this.name;
+            return copy;
+        }
     }
 }

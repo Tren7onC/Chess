@@ -12,12 +12,19 @@ namespace Chess
 {
     using System.Media;
     using Chess.Pieces;
+    using Chess.Players;
 
     public partial class Form1 : Form
     {
-        Board Chessboard = new Board();
+        List<Board> Chessboard = new List<Board>();
         Piece[] Pieces = new Piece[33];
         Game GameState = new Game();
+        Player Player1 = new Player1();
+        Player Player2 = new Player2();
+
+        //CAnt put in GameState because history stuffs
+        bool Pause = false;
+        int maxturn = 0;
 
 
         public Form1()
@@ -67,24 +74,116 @@ namespace Chess
 
         private void HandleButtonClick(object sender, EventArgs e)
         {
+            //Gets the button clicked
             Button clickedButton = sender as Button;
-            //TextBox.Text = String.Format($"{clickedButton.Tag}");
+            //This is for the Start the Game button
+            
+            if(clickedButton != null && !Pause && GameState.GameStart)
+            { //This is for the normal game play
+                int row = int.Parse(clickedButton.Tag.ToString().Substring(0, 1));
+                int col = int.Parse(clickedButton.Tag.ToString().Substring(1, 1));
 
-            int row = int.Parse(clickedButton.Tag.ToString().Substring(0,1));
-            int col = int.Parse(clickedButton.Tag.ToString().Substring(1,1));
-
-            int NumberOnboard = Chessboard.board[row, col];
-            HandleTurn(NumberOnboard,row,col);
+                int NumberOnboard = Chessboard[GameState.turnCount].board[row, col];
+                HandleTurn(NumberOnboard, row, col);
 
 
-            Chessboard = Chessboard.UpdateBoard(Pieces);
-            DrawBoard();
+                DrawBoard();
+            }
+        }
+
+        private void Start(object sender, EventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            if (GameState.GameStart == false)
+            {
+                if (clickedButton != null)
+                {
+                    if (clickedButton.Name.ToString() == "GameStart")
+                    {
+                        foreach (Control c in this.Controls) //Turns all buttons visible and one
+                        {
+                            if (c is Button || c is Label || c is TextBox)
+                            {
+                                c.Visible = true;
+                                c.Enabled = true;
+                            }
+                        }
+                        GameState.GameStart = true;
+                        TextBox.Text = String.Format($"Start!");
+                        clickedButton.Enabled = false;
+                        clickedButton.Visible = false;
+                        Chessboard.Add(new Board());
+                        Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+                        //GameState.turnCount++;
+                        //GameState.maxTurn++;
+                        TextBox.Text = String.Format("Player 1 Turn");
+                        DrawBoard();
+                    }
+                }
+
+            }
+        }
+        
+        private void History(object sender, EventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            if (clickedButton.Name == "Back" && GameState.turnCount > 0)
+            {
+                Pause = true;
+                TextBox.Text = String.Format($"{GameState.turnCount}");
+
+                Pieces = Chessboard[GameState.turnCount - 1].SavedPiece;
+                Player1 = Chessboard[GameState.turnCount - 1].SavedPlayer1;
+                Player2 = Chessboard[GameState.turnCount - 1].SavedPlayer2;
+                GameState = Chessboard[GameState.turnCount - 1].SavedGame;
+
+                Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+
+                if (GameState.whoTurn)
+                    TextBox.Text = String.Format("Player 1 Turn");
+                else
+                    TextBox.Text = String.Format($"Player 2 Turn");
+                DrawBoard();
+            }
+            else if(clickedButton.Name.ToString() == "Forward" && GameState.turnCount < maxturn)
+            {
+                TextBox.Text = String.Format($"{GameState.turnCount}");
+
+                Pieces = Chessboard[GameState.turnCount + 1].SavedPiece;
+                Player1 = Chessboard[GameState.turnCount + 1].SavedPlayer1;
+                Player2 = Chessboard[GameState.turnCount + 1].SavedPlayer2;
+                GameState = Chessboard[GameState.turnCount + 1].SavedGame;
+
+                Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+
+                if (GameState.whoTurn)
+                    TextBox.Text = String.Format("Player 1 Turn");
+                else
+                    TextBox.Text = String.Format($"Player 2 Turn");
+                DrawBoard();
+            }
+            else if(clickedButton.Name.ToString() == "Resume")
+            {
+                Chessboard.RemoveRange(GameState.turnCount + 1, Chessboard.Count - (GameState.turnCount + 1)); // Keeps 0 - currentturn. 
+
+                maxturn = GameState.turnCount;
+                Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+
+                if (GameState.whoTurn)
+                    TextBox.Text = String.Format("Player 1 Turn");
+                else
+                    TextBox.Text = String.Format($"Player 2 Turn");
+                Pause = false;
+                DrawBoard();
+
+
+            }
+            //if (clickedButton.Name.ToString() == "Forward")
         }
 
         private bool IsFriend(int val)
         {
             return GameState.whoTurn ? val >= 1 && val <= 16 : val >= 17; //This checks if, based on team, if friend or not 
-
         }
 
         public void HandleTurn(int NumberOnBoard,int row, int col)
@@ -95,32 +194,46 @@ namespace Chess
             {
                 GameState.SelectedPiece = new Tuple<int, int>(row, col); //Then set the new selected piece location
                 GameState.PieceSelected = true;
-                TextBox.Text = String.Format($"Slected {Pieces[NumberOnBoard].name}");
+                TextBox.Text = String.Format($"Selected {Pieces[NumberOnBoard].name}");
             }
             else //Not your piece
             {
                 if (GameState.PieceSelected) //If there is a piece selected then move that piece
                 {
                     List<Tuple<int, int>> PossibleMoves = new List<Tuple<int, int>>();
-                    int MovingPiece = Chessboard.board[GameState.SelectedPiece.Item1, GameState.SelectedPiece.Item2];
+                    int MovingPiece = Chessboard[GameState.turnCount].board[GameState.SelectedPiece.Item1, GameState.SelectedPiece.Item2];
 
-                    PossibleMoves = Pieces[MovingPiece].GetPossibleMoves(Chessboard);
+                    PossibleMoves = Pieces[MovingPiece].GetPossibleMoves(Chessboard[GameState.turnCount]);
 
                     bool valid = Pieces[MovingPiece].IsValidPostion(new Tuple<int, int>(row, col), PossibleMoves);
 
-                    Pieces = Pieces[MovingPiece].Move(valid, Chessboard, Pieces, new Tuple<int, int>(row, col), MovingPiece);
+                    Pieces = Pieces[MovingPiece].Move(valid, Chessboard[GameState.turnCount], Pieces, new Tuple<int, int>(row, col), MovingPiece);
 
 
-                      
+
                     //GameState.PieceSelected = false;
                     //GameState.SelectedPiece = null;
-                        
+
                     //And then change the turn and stuff
-                    if(valid)
+                    if (valid)
                     {
                         GameState.whoTurn = !GameState.whoTurn;
-                        TextBox.Text = String.Format("");
+                        if (GameState.whoTurn)
+                            TextBox.Text = String.Format("Player 1 Turn");
+                        else
+                            TextBox.Text = String.Format($"Player 2 Turn");
+                        GameState.turnCount++;
+                        maxturn++;
+                        Chessboard.Add(new Board());
 
+                        Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+                    }
+                    else
+                    {
+                        if (GameState.whoTurn)
+                            TextBox.Text = String.Format("Player 1 Turn");
+                        else
+                            TextBox.Text = String.Format($"Player 2 Turn");
                     }
 
                 }
@@ -140,7 +253,7 @@ namespace Chess
                 for (int col = 0; col < 8; col++)
                 {
                     tag = $"{row}{col}";
-                    piece = Chessboard.board[row, col];
+                    piece = Chessboard[GameState.turnCount].board[row, col];
 
                     //This will look through each button made and look at tags. Can do this becuase buttons are auto put into Controls
                     foreach (Control control in this.Controls)

@@ -12,7 +12,11 @@ namespace Chess
     internal class Board
     {
         public int[,] board = new int[8, 8];
-        
+        public Piece[] SavedPiece;
+        public Game SavedGame;
+        public Player SavedPlayer1;
+        public Player SavedPlayer2;
+
         /*
         Piece numbers for reference:
    
@@ -45,7 +49,7 @@ namespace Chess
         
         }
 
-        public Board UpdateBoard(Piece[] Pieces )
+        public Board UpdateBoard(Piece[] Pieces, Game GameState, Player Player1, Player Player2)
         {
             Board tmp = new Board();
             for (int row = 0; row < 8; row++)
@@ -56,6 +60,17 @@ namespace Chess
                 if (!Pieces[k].hasBeenTaken)
                     tmp.board[Pieces[k].row, Pieces[k].col] = k;
 
+
+            tmp.SavedPiece = new Piece[33];
+            for(int k = 1; k < 33; k++)
+            {
+                tmp.SavedPiece[k] = Pieces[k].Copy();
+            }
+
+            tmp.SavedGame = GameState.Copy();
+
+            tmp.SavedPlayer1 = Player1;
+            tmp.SavedPlayer2 = Player2;
 
             return tmp;
 
