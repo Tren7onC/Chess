@@ -15,7 +15,10 @@ namespace Chess.Pieces
             this.row = row;
             this.col = col;
             this.Pointvalue = 9;
-            this.name = "Queen";
+            if (team)
+                this.name = "WhiteQueen";
+            else
+                this.name = "BlackQueen";
         }
         //tmp.Add(new Tuple<int, int>(fRow, fCol));
         private bool IsOppenent(int val)

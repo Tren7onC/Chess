@@ -9,23 +9,15 @@ namespace Chess
     using Chess.Pieces;
     internal abstract class Player
     {
-        public int points = 0;
-        public int Time = 0;
-        public List<string> PiecesTaken;
+        public int points;
+        //public List<string> PiecesTaken = new List<string>();
+
 
         public abstract void UpdatePiecesTaken(Piece[] Pieces);
 
+        public abstract bool IsInCheck(Piece[] Pieces, Board board);
+
         public abstract Player Copy();
-
-        public int GetPoints()
-        {
-            return points;
-        }
-
-        public int GetTime()
-        {
-            return Time;
-        }
 
     }
 

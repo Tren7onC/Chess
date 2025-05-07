@@ -95,7 +95,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.TextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -129,6 +128,19 @@
             this.Back = new System.Windows.Forms.Button();
             this.Forward = new System.Windows.Forms.Button();
             this.Resume = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.PL1_points = new System.Windows.Forms.TextBox();
+            this.PL2_points = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.IsInCheck = new System.Windows.Forms.TextBox();
+            this.P2 = new System.Windows.Forms.Button();
+            this.P3 = new System.Windows.Forms.Button();
+            this.P4 = new System.Windows.Forms.Button();
+            this.P5 = new System.Windows.Forms.Button();
+            this.TextBox = new System.Windows.Forms.TextBox();
+            this.P1 = new System.Windows.Forms.TextBox();
+            this.Player1Won = new System.Windows.Forms.Button();
+            this.Player2Won = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -1027,15 +1039,6 @@
             this.label4.Text = "B";
             this.label4.Visible = false;
             // 
-            // TextBox
-            // 
-            this.TextBox.Enabled = false;
-            this.TextBox.Location = new System.Drawing.Point(206, 515);
-            this.TextBox.Name = "TextBox";
-            this.TextBox.Size = new System.Drawing.Size(231, 26);
-            this.TextBox.TabIndex = 69;
-            this.TextBox.Visible = false;
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -1405,11 +1408,169 @@
             this.Resume.Visible = false;
             this.Resume.Click += new System.EventHandler(this.History);
             // 
+            // textBox1
+            // 
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(598, 261);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(112, 19);
+            this.textBox1.TabIndex = 103;
+            this.textBox1.Text = "Player 1 Points:";
+            this.textBox1.Visible = false;
+            // 
+            // PL1_points
+            // 
+            this.PL1_points.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PL1_points.Enabled = false;
+            this.PL1_points.Location = new System.Drawing.Point(725, 261);
+            this.PL1_points.Name = "PL1_points";
+            this.PL1_points.Size = new System.Drawing.Size(45, 19);
+            this.PL1_points.TabIndex = 105;
+            this.PL1_points.Visible = false;
+            // 
+            // PL2_points
+            // 
+            this.PL2_points.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PL2_points.Enabled = false;
+            this.PL2_points.Location = new System.Drawing.Point(725, 304);
+            this.PL2_points.Name = "PL2_points";
+            this.PL2_points.Size = new System.Drawing.Size(45, 19);
+            this.PL2_points.TabIndex = 106;
+            this.PL2_points.Visible = false;
+            // 
+            // textBox5
+            // 
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox5.Enabled = false;
+            this.textBox5.Location = new System.Drawing.Point(598, 304);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(112, 19);
+            this.textBox5.TabIndex = 107;
+            this.textBox5.Text = "Player 2 Points:";
+            this.textBox5.Visible = false;
+            // 
+            // IsInCheck
+            // 
+            this.IsInCheck.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.IsInCheck.Enabled = false;
+            this.IsInCheck.Location = new System.Drawing.Point(457, 518);
+            this.IsInCheck.Name = "IsInCheck";
+            this.IsInCheck.Size = new System.Drawing.Size(160, 19);
+            this.IsInCheck.TabIndex = 108;
+            this.IsInCheck.Visible = false;
+            // 
+            // P2
+            // 
+            this.P2.Enabled = false;
+            this.P2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.P2.Location = new System.Drawing.Point(567, 200);
+            this.P2.Name = "P2";
+            this.P2.Size = new System.Drawing.Size(50, 50);
+            this.P2.TabIndex = 109;
+            this.P2.Tag = "";
+            this.P2.UseVisualStyleBackColor = true;
+            this.P2.Visible = false;
+            this.P2.Click += new System.EventHandler(this.Promotion);
+            // 
+            // P3
+            // 
+            this.P3.Enabled = false;
+            this.P3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.P3.Location = new System.Drawing.Point(567, 273);
+            this.P3.Name = "P3";
+            this.P3.Size = new System.Drawing.Size(50, 50);
+            this.P3.TabIndex = 110;
+            this.P3.Tag = "";
+            this.P3.UseVisualStyleBackColor = true;
+            this.P3.Visible = false;
+            this.P3.Click += new System.EventHandler(this.Promotion);
+            // 
+            // P4
+            // 
+            this.P4.Enabled = false;
+            this.P4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.P4.Location = new System.Drawing.Point(567, 343);
+            this.P4.Name = "P4";
+            this.P4.Size = new System.Drawing.Size(50, 50);
+            this.P4.TabIndex = 111;
+            this.P4.Tag = "";
+            this.P4.UseVisualStyleBackColor = true;
+            this.P4.Visible = false;
+            this.P4.Click += new System.EventHandler(this.Promotion);
+            // 
+            // P5
+            // 
+            this.P5.Enabled = false;
+            this.P5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.P5.Location = new System.Drawing.Point(567, 411);
+            this.P5.Name = "P5";
+            this.P5.Size = new System.Drawing.Size(50, 50);
+            this.P5.TabIndex = 112;
+            this.P5.Tag = "";
+            this.P5.UseVisualStyleBackColor = true;
+            this.P5.Visible = false;
+            this.P5.Click += new System.EventHandler(this.Promotion);
+            // 
+            // TextBox
+            // 
+            this.TextBox.Enabled = false;
+            this.TextBox.Location = new System.Drawing.Point(206, 515);
+            this.TextBox.Name = "TextBox";
+            this.TextBox.Size = new System.Drawing.Size(231, 26);
+            this.TextBox.TabIndex = 69;
+            this.TextBox.Visible = false;
+            // 
+            // P1
+            // 
+            this.P1.Enabled = false;
+            this.P1.Location = new System.Drawing.Point(517, 168);
+            this.P1.Name = "P1";
+            this.P1.Size = new System.Drawing.Size(146, 26);
+            this.P1.TabIndex = 113;
+            this.P1.Tag = "P1";
+            this.P1.Text = "Choose Promotion";
+            this.P1.Visible = false;
+            // 
+            // Player1Won
+            // 
+            this.Player1Won.Enabled = false;
+            this.Player1Won.Location = new System.Drawing.Point(550, 95);
+            this.Player1Won.Name = "Player1Won";
+            this.Player1Won.Size = new System.Drawing.Size(228, 134);
+            this.Player1Won.TabIndex = 114;
+            this.Player1Won.Text = "Player1 Won!";
+            this.Player1Won.UseVisualStyleBackColor = true;
+            this.Player1Won.Visible = false;
+            // 
+            // Player2Won
+            // 
+            this.Player2Won.Enabled = false;
+            this.Player2Won.Location = new System.Drawing.Point(550, 96);
+            this.Player2Won.Name = "Player2Won";
+            this.Player2Won.Size = new System.Drawing.Size(228, 133);
+            this.Player2Won.TabIndex = 115;
+            this.Player2Won.Text = "Player2 Won!";
+            this.Player2Won.UseVisualStyleBackColor = true;
+            this.Player2Won.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 607);
+            this.Controls.Add(this.Player2Won);
+            this.Controls.Add(this.Player1Won);
+            this.Controls.Add(this.P1);
+            this.Controls.Add(this.P5);
+            this.Controls.Add(this.P4);
+            this.Controls.Add(this.P3);
+            this.Controls.Add(this.P2);
+            this.Controls.Add(this.IsInCheck);
+            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.PL2_points);
+            this.Controls.Add(this.PL1_points);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.Resume);
             this.Controls.Add(this.Forward);
             this.Controls.Add(this.Back);
@@ -1588,7 +1749,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox TextBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
@@ -1622,6 +1782,19 @@
         private System.Windows.Forms.Button Back;
         private System.Windows.Forms.Button Forward;
         private System.Windows.Forms.Button Resume;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox PL1_points;
+        private System.Windows.Forms.TextBox PL2_points;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox IsInCheck;
+        private System.Windows.Forms.Button P2;
+        private System.Windows.Forms.Button P3;
+        private System.Windows.Forms.Button P4;
+        private System.Windows.Forms.Button P5;
+        private System.Windows.Forms.TextBox TextBox;
+        private System.Windows.Forms.TextBox P1;
+        private System.Windows.Forms.Button Player1Won;
+        private System.Windows.Forms.Button Player2Won;
     }
 }
 

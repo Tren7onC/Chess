@@ -16,7 +16,10 @@ namespace Chess.Pieces
             this.row = row;
             this.col = col;
             this.Pointvalue = 5;
-            this.name = "Rook";
+            if (team)
+                this.name = "WhiteRook";
+            else
+                this.name = "BlackRook";
 
         }
         //tmp.Add(new Tuple<int, int>(fRow, fCol));

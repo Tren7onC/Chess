@@ -22,7 +22,7 @@ namespace Chess
         Player Player1 = new Player1();
         Player Player2 = new Player2();
 
-        //CAnt put in GameState because history stuffs
+        //Cant put in GameState because history stuffs
         bool Pause = false;
         int maxturn = 0;
 
@@ -49,9 +49,9 @@ namespace Chess
             Pieces[16] = new King(true, 7, 4);
 
             ////Player 2
-            Pieces[17] = new Pawn(false, 1, 0);
+            Pieces[17] = new Pawn(false, 6, 0);
             Pieces[18] = new Pawn(false, 1, 1);
-            Pieces[19] = new Pawn(false, 1, 2);
+            Pieces[19] = new Pawn(false, 6, 2);
             Pieces[20] = new Pawn(false, 1, 3);
             Pieces[21] = new Pawn(false, 1, 4);
             Pieces[22] = new Pawn(false, 1, 5);
@@ -104,8 +104,11 @@ namespace Chess
                         {
                             if (c is Button || c is Label || c is TextBox)
                             {
-                                c.Visible = true;
-                                c.Enabled = true;
+                                if(!GameState.PawnPromoteBoard.Contains(c.Name.ToString()) && c.Name.ToString() != "Player1Won" && c.Name.ToString() != "Player2Won")
+                                {
+                                    c.Visible = true;
+                                    c.Enabled = true;
+                                }
                             }
                         }
                         GameState.GameStart = true;
@@ -114,8 +117,6 @@ namespace Chess
                         clickedButton.Visible = false;
                         Chessboard.Add(new Board());
                         Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
-                        //GameState.turnCount++;
-                        //GameState.maxTurn++;
                         TextBox.Text = String.Format("Player 1 Turn");
                         DrawBoard();
                     }
@@ -124,7 +125,7 @@ namespace Chess
             }
         }
         
-        private void History(object sender, EventArgs e)
+        private void History(object sender, EventArgs e) //Overall some slightly different repaeting of code.
         {
             Button clickedButton = sender as Button;
             if (clickedButton.Name == "Back" && GameState.turnCount > 0)
@@ -138,11 +139,13 @@ namespace Chess
                 GameState = Chessboard[GameState.turnCount - 1].SavedGame;
 
                 Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
-
+                PL1_points.Text = String.Format($"{Player1.points}");
+                PL2_points.Text = String.Format($"{Player2.points}");
                 if (GameState.whoTurn)
                     TextBox.Text = String.Format("Player 1 Turn");
                 else
                     TextBox.Text = String.Format($"Player 2 Turn");
+                
                 DrawBoard();
             }
             else if(clickedButton.Name.ToString() == "Forward" && GameState.turnCount < maxturn)
@@ -173,12 +176,44 @@ namespace Chess
                     TextBox.Text = String.Format("Player 1 Turn");
                 else
                     TextBox.Text = String.Format($"Player 2 Turn");
+            
+                PL2_points.Refresh();
                 Pause = false;
                 DrawBoard();
-
-
             }
             //if (clickedButton.Name.ToString() == "Forward")
+        }
+
+        private void Promotion(object sender, EventArgs e) //Buttons input for promotion
+        {
+            Button clickedButton = sender as Button;
+            if (clickedButton.Name.ToString() == "P2")
+                Pieces[GameState.pawnNumber] = new Rook(!GameState.whoTurn, GameState.pawnPromotionrow, GameState.pawnPromotioncol);
+            else if(clickedButton.Name.ToString() == "P3")
+                Pieces[GameState.pawnNumber] = new Knight(!GameState.whoTurn, GameState.pawnPromotionrow, GameState.pawnPromotioncol);
+            else if (clickedButton.Name.ToString() == "P4")
+                Pieces[GameState.pawnNumber] = new Bishop(!GameState.whoTurn, GameState.pawnPromotionrow, GameState.pawnPromotioncol);
+            else if (clickedButton.Name.ToString() == "P5")
+                Pieces[GameState.pawnNumber] = new Queen(!GameState.whoTurn, GameState.pawnPromotionrow, GameState.pawnPromotioncol);
+
+            foreach (Control c in this.Controls) //Turns all buttons visible and one
+            {
+                if (c is Button || c is Label || c is TextBox)
+                {
+                    if (!GameState.PawnPromoteBoard.Contains(c.Name.ToString()) && c.Name.ToString() != "GameStart" && c.Name.ToString() != "Player1Won" && c.Name.ToString() != "Player2Won")
+                    {
+                        c.Visible = true;
+                        c.Enabled = true;
+                    }
+                    else
+                    {
+                        c.Visible = false;
+                        c.Enabled = false;
+                    }
+                }
+            }
+            Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+            DrawBoard();
         }
 
         private bool IsFriend(int val)
@@ -189,7 +224,6 @@ namespace Chess
         public void HandleTurn(int NumberOnBoard,int row, int col)
         {
             //Overall turn structure
-                //NumberOnBoard >= 1 && NumberOnBoard <= 16 ////if it is your piece// player 1
             if (IsFriend(NumberOnBoard)) //Check to see if your peice based on turn
             {
                 GameState.SelectedPiece = new Tuple<int, int>(row, col); //Then set the new selected piece location
@@ -210,10 +244,6 @@ namespace Chess
                     Pieces = Pieces[MovingPiece].Move(valid, Chessboard[GameState.turnCount], Pieces, new Tuple<int, int>(row, col), MovingPiece);
 
 
-
-                    //GameState.PieceSelected = false;
-                    //GameState.SelectedPiece = null;
-
                     //And then change the turn and stuff
                     if (valid)
                     {
@@ -222,11 +252,21 @@ namespace Chess
                             TextBox.Text = String.Format("Player 1 Turn");
                         else
                             TextBox.Text = String.Format($"Player 2 Turn");
+                        //History implementation
                         GameState.turnCount++;
                         maxturn++;
                         Chessboard.Add(new Board());
-
                         Chessboard[GameState.turnCount] = Chessboard[GameState.turnCount].UpdateBoard(Pieces, GameState, Player1, Player2);
+
+                        //If someone won
+                        if (GameState.SomeoneWon(Pieces))
+                        {
+                            Winner();
+                        }
+                        else if (GameState.CheckPawnPromotion(Pieces))   //Pawn Promotion
+                        {
+                            PawnPromotion();
+                        }
                     }
                     else
                     {
@@ -241,122 +281,242 @@ namespace Chess
                 GameState.SelectedPiece = null;
             }
         }
+
+        void PawnPromotion()
+        {
+            foreach (Control c in this.Controls) //Turns all buttons visible and one
+            {
+                if (c is Button || c is Label || c is TextBox)
+                {
+                    if (GameState.PawnPromoteBoard.Contains(c.Name.ToString()))
+                    {
+                        c.Visible = true;
+                        c.Enabled = true;
+                        if (!GameState.whoTurn) //set player 1 pieces
+                        {
+                            if (c.Name.ToString() == "P2")
+                            {
+                                c.BackgroundImage = Properties.Resources.WhiteRook;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P3")
+                            {
+                                c.BackgroundImage = Properties.Resources.WhiteKnight;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P4")
+                            {
+                                c.BackgroundImage = Properties.Resources.WhiteBishop;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P5")
+                            {
+                                c.BackgroundImage = Properties.Resources.WhiteQueen;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                        }
+                        else                   //Player 2 pieces
+                        {
+                            if (c.Name.ToString() == "P2")
+                            {
+                                c.BackgroundImage = Properties.Resources.BlackRook;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P3")
+                            {
+                                c.BackgroundImage = Properties.Resources.BlackKnight;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P4")
+                            {
+                                c.BackgroundImage = Properties.Resources.BlackBishop;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (c.Name.ToString() == "P5")
+                            {
+                                c.BackgroundImage = Properties.Resources.BlackQueen;
+                                //c.ImageAlign = ContentAlignment.MiddleCenter;
+                                c.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                        }
+                    }
+                    else if(GameState.SideBoard.Contains(c.Name.ToString()))
+                    {
+                        c.Visible = false;
+                        c.Enabled = false;
+                    }
+                    else
+                        c.Enabled= false;
+                }
+            }
+        }
+
+        void Winner()
+        {
+            foreach (Control c in this.Controls) //Turns all buttons visible and one
+            {
+                if (c is Button || c is Label || c is TextBox)
+                {
+                    if (GameState.PawnPromoteBoard.Contains(c.Name.ToString()) || GameState.SideBoard.Contains(c.Name.ToString()))
+                    {
+                        c.Visible = false;
+                        c.Enabled = false;
+                    }
+                    else if (c.Name.ToString() == "Player1Won" && !GameState.whoTurn)
+                    {
+                        c.Visible = true;
+                        c.Enabled = true;
+                    }
+                    else if (c.Name.ToString() == "Player2Won" && GameState.whoTurn)
+                    {
+                        c.Visible = true;
+                        c.Enabled = true;
+                    }
+                    else
+                    {
+                        c.Enabled = false;
+                    }
+
+                }
+            }
+        }
+
         public void DrawBoard()
         {
             string tag;
             int piece;
             Button targetbutton = null;
-            
+            Player1.UpdatePiecesTaken(Pieces);
+            Player2.UpdatePiecesTaken(Pieces);
+            PL1_points.Text = String.Format($"{Player1.points}");
+            PL2_points.Text = String.Format($"{Player2.points}");
+            if(Player1.IsInCheck(Pieces, Chessboard[GameState.turnCount]))
+                IsInCheck.Text = String.Format("Player 1 is in Check!!");
+            else if (Player2.IsInCheck(Pieces, Chessboard[GameState.turnCount]))
+                IsInCheck.Text = String.Format("Player 2 is in Check!!");
+            else
+                IsInCheck.Text = String.Format("");
+
+
+
             //Will go through row and col
             for (int row = 0; row < 8; row++)
-            {
-                for (int col = 0; col < 8; col++)
                 {
-                    tag = $"{row}{col}";
-                    piece = Chessboard[GameState.turnCount].board[row, col];
+                    for (int col = 0; col < 8; col++)
+                    {
+                        tag = $"{row}{col}";
+                        piece = Chessboard[GameState.turnCount].board[row, col];
 
-                    //This will look through each button made and look at tags. Can do this becuase buttons are auto put into Controls
-                    foreach (Control control in this.Controls)
-                    {
-                        if (control is Button btn && btn.Tag != null && btn.Tag.ToString() == tag)
+
+                        //This will look through each button made and look at tags. Can do this becuase buttons are auto put into Controls
+                        foreach (Control control in this.Controls)
                         {
-                            targetbutton = btn;
-                            break;
+                            if (control is Button btn && btn.Tag != null && btn.Tag.ToString() == tag)
+                            {
+                                targetbutton = btn;
+                                break;
+                            }
                         }
-                    }
-                    if (targetbutton != null)
-                    {
-                        if (piece >= 1 && piece <= 8)
+                        if (targetbutton != null)
                         {
-                            //White Pawns
-                            targetbutton.BackgroundImage = Properties.Resources.WhitePawn;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if(piece == 9 || piece == 10)
-                        {
-                            //White Rook
-                            targetbutton.BackgroundImage = Properties.Resources.WhiteRook;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 11 || piece == 12)
-                        {
-                            //White Knight
-                            targetbutton.BackgroundImage = Properties.Resources.WhiteKnight;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 13 || piece == 14)
-                        {
-                            //White Bishop
-                            targetbutton.BackgroundImage = Properties.Resources.WhiteBishop;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 15)
-                        {
-                            //White Queen
-                            targetbutton.BackgroundImage = Properties.Resources.WhiteQueen;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 16)
-                        {
-                            //White King
-                            targetbutton.BackgroundImage = Properties.Resources.WhiteKing;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece >= 17 && piece <= 24)
-                        {
-                            //Black Pawn
-                            targetbutton.BackgroundImage = Properties.Resources.BlackPawn;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 25 || piece == 26)
-                        { 
-                            //Black Rook
-                            targetbutton.BackgroundImage = Properties.Resources.BlackRook;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 27 || piece == 28)
-                        {
-                            //Black Rook
-                            targetbutton.BackgroundImage = Properties.Resources.BlackKnight;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 29 || piece == 30)
-                        {
-                            //Black Rook
-                            targetbutton.BackgroundImage = Properties.Resources.BlackBishop;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 31)
-                        {
-                            //Black Rook
-                            targetbutton.BackgroundImage = Properties.Resources.BlackQueen;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if (piece == 32)
-                        {
-                            //Black Rook
-                            targetbutton.BackgroundImage = Properties.Resources.BlackKing;
-                            targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
-                            targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
-                        }
-                        else if(piece == 0)
-                        {
-                            targetbutton.BackgroundImage = null;
+                            if (piece == 0)
+                            {
+                                targetbutton.BackgroundImage = null;
+                            }
+                            else if (Pieces[piece].name == "WhitePawn")
+                            {
+                                //White Pawns
+                                targetbutton.BackgroundImage = Properties.Resources.WhitePawn;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "WhiteRook")
+                            {
+                                //White Rook
+                                targetbutton.BackgroundImage = Properties.Resources.WhiteRook;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "WhiteKnight")
+                            {
+                                //White Knight
+                                targetbutton.BackgroundImage = Properties.Resources.WhiteKnight;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "WhiteBishop")
+                            {
+                                //White Bishop
+                                targetbutton.BackgroundImage = Properties.Resources.WhiteBishop;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "WhiteQueen")
+                            {
+                                //White Queen
+                                targetbutton.BackgroundImage = Properties.Resources.WhiteQueen;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "WhiteKing")
+                            {
+                                //White King
+                                targetbutton.BackgroundImage = Properties.Resources.WhiteKing;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackPawn")
+                            {
+                                //Black Pawn
+                                targetbutton.BackgroundImage = Properties.Resources.BlackPawn;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackRook")
+                            {
+                                //Black Rook
+                                targetbutton.BackgroundImage = Properties.Resources.BlackRook;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackKnight")
+                            {
+                                //Black Rook
+                                targetbutton.BackgroundImage = Properties.Resources.BlackKnight;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackBishop")
+                            {
+                                //Black Rook
+                                targetbutton.BackgroundImage = Properties.Resources.BlackBishop;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackQueen")
+                            {
+                                //Black Rook
+                                targetbutton.BackgroundImage = Properties.Resources.BlackQueen;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
+                            else if (Pieces[piece].name == "BlackKing")
+                            {
+                                //Black Rook
+                                targetbutton.BackgroundImage = Properties.Resources.BlackKing;
+                                targetbutton.ImageAlign = ContentAlignment.MiddleCenter;
+                                targetbutton.BackgroundImageLayout = ImageLayout.Zoom;
+                            }
                         }
                     }
                 }
-            }
         }
 
     }

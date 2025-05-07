@@ -15,7 +15,10 @@ namespace Chess.Pieces
             this.row = row;
             this.col = col;
             this.Pointvalue = 3;
-            this.name = "Knight";
+            if (team)
+                this.name = "WhiteKnight";
+            else
+                this.name = "BlackKnight";
         }
 
         private bool IsOppenent(int val)

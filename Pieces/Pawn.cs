@@ -15,7 +15,10 @@ namespace Chess.Pieces
             this.row = row;
             this.col = col;
             this.Pointvalue = 1;
-            this.name = "Pawn";
+            if (team)
+                this.name = "WhitePawn";
+            else
+                this.name = "BlackPawn";
 
         }
         public override List<Tuple<int, int>> GetPossibleMoves(Board Chessboard)
@@ -24,13 +27,14 @@ namespace Chess.Pieces
 
             if(team) // Player 1
             {
-                if (row > 0 && Chessboard.board[row - 1, col] == 0)
-                    tmp.Add(new Tuple<int, int>(row - 1, col));
-
-                if (row == 6 && Chessboard.board[row - 1, col] == 0 && Chessboard.board[row - 2, col] == 0)
-                    tmp.Add(new Tuple<int, int>(row - 2, col));
-                if (row != 0)
+                if(row != 0) 
                 {
+                    if (row > 0 && Chessboard.board[row - 1, col] == 0)
+                        tmp.Add(new Tuple<int, int>(row - 1, col));
+
+                    if (row == 6 && Chessboard.board[row - 1, col] == 0 && Chessboard.board[row - 2, col] == 0)
+                        tmp.Add(new Tuple<int, int>(row - 2, col));
+
                     if (col > 0 && Chessboard.board[row - 1, col - 1] >= 17)
                         tmp.Add(new Tuple<int, int>(row - 1, col - 1));
 
@@ -40,17 +44,18 @@ namespace Chess.Pieces
             }
             else if(!team)
             {
-                if (row > 0 && Chessboard.board[row + 1, col] == 0)
-                    tmp.Add(new Tuple<int, int>(row + 1, col));
-
-                if (row == 1 && Chessboard.board[row + 1, col] == 0 && Chessboard.board[row + 2, col] == 0)
-                    tmp.Add(new Tuple<int, int>(row + 2, col));
                 if (row != 7)
                 {
+                    if (row > 0 && Chessboard.board[row + 1, col] == 0)
+                    tmp.Add(new Tuple<int, int>(row + 1, col));
+
+                    if (row == 1 && Chessboard.board[row + 1, col] == 0 && Chessboard.board[row + 2, col] == 0)
+                        tmp.Add(new Tuple<int, int>(row + 2, col));
+
                     if (col > 0 && Chessboard.board[row + 1, col - 1] <= 17 && Chessboard.board[row + 1, col - 1] >= 1)
                         tmp.Add(new Tuple<int, int>(row + 1, col - 1));
 
-                    if (col < 7 && Chessboard.board[row + 1, col - 1] <= 17 && Chessboard.board[row + 1, col - 1] >= 1)
+                    if (col < 7 && Chessboard.board[row + 1, col + 1] <= 17 && Chessboard.board[row + 1, col + 1] >= 1)
                         tmp.Add(new Tuple<int, int>(row + 1, col + 1));
                 }
             }

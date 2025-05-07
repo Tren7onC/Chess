@@ -14,8 +14,11 @@ namespace Chess.Pieces
             this.team = team;
             this.row = row;
             this.col = col;
-            this.Pointvalue = 5;
-            this.name = "Bishop";
+            this.Pointvalue = 3;
+            if (team)
+                this.name = "WhiteBishop";
+            else
+                this.name = "BlackBishop";
         }
         //tmp.Add(new Tuple<int, int>(fRow, fCol));
         private bool IsOppenent(int val)
