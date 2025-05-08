@@ -26,10 +26,12 @@ namespace Chess
         public int pawnPromotionrow;
         public int pawnPromotioncol;
         public int pawnNumber;
-        public List<string> SideBoard = new List<string> { "Back", "Forward", "Resume", "textBox1",
+
+        //Read only values in the Game class
+        public List<string> SideBoard { get; } = new List<string> { "Back", "Forward", "Resume", "textBox1",
                                                     "textBox5", "PL1_points", "PL2_points" };
 
-        public List<string> PawnPromoteBoard = new List<string> { "P1", "P2", "P3", "P4", "P5" };
+        public List<string> PawnPromoteBoard { get; } = new List<string> { "P1", "P2", "P3", "P4", "P5" };
 
         public bool SomeoneWon(Piece[] Pieces)
         {

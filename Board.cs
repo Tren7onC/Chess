@@ -9,6 +9,8 @@ namespace Chess
 {
 
     using Chess.Pieces;
+    using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
     internal class Board
     {
         public int[,] board = new int[8, 8];
@@ -46,7 +48,6 @@ namespace Chess
                 board[0, 0] = 25; board[0, 1] = 27; board[0, 2] = 29; board[0, 3] = 31; board[0, 4] = 32; board[0, 5] = 30; board[0, 6] = 28; board[0, 7] = 26;
                 //Row 1 for Player 1/ Black Team
                 board[1, 0] = 17; board[1, 1] = 18; board[1, 2] = 19; board[1, 3] = 20; board[1, 4] = 21; board[1, 5] = 22; board[1, 6] = 23; board[1, 7] = 24;
-        
         }
 
         public Board UpdateBoard(Piece[] Pieces, Game GameState, Player Player1, Player Player2)
@@ -76,7 +77,5 @@ namespace Chess
 
         }
 
-
     }
-
 }

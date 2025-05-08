@@ -11,9 +11,9 @@ namespace Chess.Pieces
     {
         public int row;
         public int col;
-        public int Pointvalue;
+        public int Pointvalue { get; protected set; }
         public bool hasBeenTaken = false;
-        public bool team;               //True for Player 1/White. False for Player 2/Black
+        public bool team { get; protected set; }               //True for Player 1/White. False for Player 2/Black
         public bool hasMoved = false;
         public string name;
 

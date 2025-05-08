@@ -13,6 +13,7 @@ namespace Chess
     using System.Media;
     using Chess.Pieces;
     using Chess.Players;
+    using static System.Net.Mime.MediaTypeNames;
 
     public partial class Form1 : Form
     {
@@ -49,9 +50,9 @@ namespace Chess
             Pieces[16] = new King(true, 7, 4);
 
             ////Player 2
-            Pieces[17] = new Pawn(false, 6, 0);
+            Pieces[17] = new Pawn(false, 1, 0);
             Pieces[18] = new Pawn(false, 1, 1);
-            Pieces[19] = new Pawn(false, 6, 2);
+            Pieces[19] = new Pawn(false, 1, 2);
             Pieces[20] = new Pawn(false, 1, 3);
             Pieces[21] = new Pawn(false, 1, 4);
             Pieces[22] = new Pawn(false, 1, 5);
